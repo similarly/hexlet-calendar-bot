@@ -7,7 +7,7 @@ from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.errors import HttpError
 
-from hexlet_calendar.src.bot import Bot
+from calendarbot.src.bot import Bot
 from googleapiclient.discovery import build
 
 # If modifying these scopes, delete the file token.json.
@@ -38,7 +38,8 @@ def main():
             token.write(creds.to_json())
 
     try:
-        service = build('calendar', 'v3', credentials=creds)
+        #running bot here
+        service = build('calendar', 'v3', credentials=creds) 
         bot = Bot(service)
         bot.start()
     except HttpError as error:
