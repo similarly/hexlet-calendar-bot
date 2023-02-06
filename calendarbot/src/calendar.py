@@ -10,6 +10,7 @@ from googleapiclient.errors import HttpError
 from googleapiclient.discovery import build
 
 from calendarbot.src.bot_requests import send_message
+from calendarbot.src.events import Events 
 
 
 class Calendar:
@@ -47,63 +48,21 @@ class Calendar:
         now = datetime.datetime.utcnow().isoformat() + 'Z'  # 'Z' indicates UTC time
         print('Getting events...')
         # Call API
-        events_response = self.service.events().list(calendarId=self.CALENDAR_ID,
+        events = self.service.events().list(calendarId=self.CALENDAR_ID,
                                                      timeMin=now,
                                                      maxResults=7,
                                                      orderBy='startTime',
-                                                     singleEvents=True).execute()
+                                                     singleEvents=True).execute().get('items', [])
         print("Got 'em")
-        events = events_response.get('items', [])
         if not events:
             print('No upcoming events found.')
             return
         return events
 
     def send_events(self) -> None:
-        events = self.get_events()
-        # Filter needed keys
-        events_data = [
-            {key: event.get(key) for key in ['summary', 'start']} for event in events]
-        # Format dateTime
-        # start = event['start'].get('dateTime', event['start'].get('date'))
-
-        events_data = self.parse_events(events_data)
-        # Format lines into blocks
-        events_formatted = self.format(
-            events_data, ['summary', 'start', 'author'])
+        events = Events(self.get_events()).format(['summary', 'start', 'author'])
         message_text = """*Следующие события:*\n{events}""".format(
-            events=events_formatted)
+            events=events)
         # Send message
         send_message(self.KEY, text=message_text,
                      chat_id=self.CHAT_ID, parse_mode='Markdown')
-
-    def format(self, events_data: list, keys: list) -> str:
-        blocks_list = []
-        for event in events_data:
-            print(event)
-            # Join event dictionary keys into block
-            block = '\n'.join([event.get(key).strip() for key in keys])
-            blocks_list.append('• ' + block + '\n')
-        formatted_events = ''.join(blocks_list)
-        return formatted_events
-
-    def parse_events(self, events: list) -> list:
-        bad_cases = [' Наставник', 'Наставник',
-                     ' (ФИ наставника)', '(ФИ наставника)', ' (ФИ наставника) ', 'Нет наставника']
-        parsed_events = []
-        for event in events:
-            # Create new fields
-            split = event['summary'].split(';')
-            body, after_semi = split
-            start = event['start'].get('dateTime', event['start'].get('date'))
-            start_formatted = datetime.datetime.fromisoformat(
-                start).strftime("%d.%m, %H:%M")
-            # If no author
-            if len(split) == 1:
-                after_semi = 'Нет наставника.'
-            # Add restructured event
-            parsed_events.append(
-                {**event, 'start': start_formatted, 'summary': body, 'author': after_semi})
-        filtered_events = [event for event in parsed_events if event.get(
-            'author') not in bad_cases]
-        return filtered_events
