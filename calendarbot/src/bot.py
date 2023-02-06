@@ -1,12 +1,13 @@
 import requests
 import time
 
-from calendarbot.src.calendar import Calendar
-
+from calendarbot.src.updates import Updates
+from calendarbot.src.actions import Actions
+from calendarbot.src.config import APIkeys
 
 class Bot:
-    KEY: str = '6040140772:AAF17CAHtCCNgmnf0Wj4ow9DzZJ2bWfFgqQ'
-
+    KEY: str = APIkeys.telegramAPIKey
+    
     def start(self) -> None:
         self.subscribe()
 
@@ -17,23 +18,27 @@ class Bot:
         while True:
             url = f"https://api.telegram.org/bot{self.KEY}/getUpdates?offset={offset}&allowedUpdates={allowed_updates}&timeout=60"
             response = requests.get(url, timeout=(3.05, 60))
-
-            # TODO: make it work through make_request function?
             if response.status_code == 200:
                 print('Succesfully requested updates.')
             elif response.status_code != 304:
                 print(f"Couldn't request updates: {response.status_code}")
                 time.sleep(60)
-            data = response.json()
-            if not data['result']:
+            updates = Updates(response.json()['result'])
+            if updates.is_empty():
                 print('NO NEW UPDATES')
             else:
-                offset = data['result'][0]['update_id'] + 1
-                if 'text' in data['result'][0]['message'].keys():
-                    message_text = data['result'][0]['message']['text']
-                    if message_text == '/getcalendar':
-                        calendar = Calendar()
-                        calendar.send_events()
-                    # DEBUG
-                    print('MESSAGE: ' + message_text)
-                time.sleep(1)
+                # TODO Get and process updates in batches
+                update = updates[0]
+                offset = update.get('update_id') + 1
+                try:
+                    text = update.get('message').get('text')
+                    if not text:
+                        raise Exception('NO MESSAGE UPDATE.')
+                    print('MESSAGE: ' + text)
+                    if text[0] == '/':
+                        action = Actions()
+                        action.execute(text)
+                except Exception as e:
+                    print(e)
+                    pass
+                # time.sleep(1)
