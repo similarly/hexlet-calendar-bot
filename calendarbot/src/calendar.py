@@ -16,10 +16,10 @@ from calendarbot.src.events import Events
 class Calendar:
     # If modifying these scopes, delete the file token.json.
     SCOPES: str = ['https://www.googleapis.com/auth/calendar.readonly']
-    creds = None
     KEY: str = '6040140772:AAF17CAHtCCNgmnf0Wj4ow9DzZJ2bWfFgqQ'
     CHAT_ID: str = '5000698126'
     CALENDAR_ID: str = 'c_evuik4e31matebv2hn2ahvk05k@group.calendar.google.com'
+    creds = None
 
     def __init__(self) -> None:
         # The file token.json stores the user's access and refresh tokens, and is
