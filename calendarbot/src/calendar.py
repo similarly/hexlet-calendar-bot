@@ -11,12 +11,12 @@ from googleapiclient.discovery import build
 
 from calendarbot.src.bot_requests import send_message
 from calendarbot.src.events import Events 
-
+from calendarbot.src.config import APIkeys
 
 class Calendar:
     # If modifying these scopes, delete the file token.json.
     SCOPES: str = ['https://www.googleapis.com/auth/calendar.readonly']
-    KEY: str = '6040140772:AAF17CAHtCCNgmnf0Wj4ow9DzZJ2bWfFgqQ'
+    KEY: str = APIkeys.telegramAPIKey
     CHAT_ID: str = '5000698126'
     CALENDAR_ID: str = 'c_evuik4e31matebv2hn2ahvk05k@group.calendar.google.com'
     creds = None
@@ -64,5 +64,5 @@ class Calendar:
         message_text = """*Следующие события:*\n{events}""".format(
             events=events)
         # Send message
-        send_message(self.KEY, text=message_text,
+        send_message(text=message_text,
                      chat_id=self.CHAT_ID, parse_mode='Markdown')

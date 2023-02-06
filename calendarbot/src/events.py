@@ -1,5 +1,4 @@
 import datetime
-# from typing import 'Events', List
 from typing import List
 from typing_extensions import Self
 from dataclasses import dataclass
