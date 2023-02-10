@@ -1,7 +1,7 @@
-from calendarbot.src.bot import Bot
+from calendarbot.Bot.bot import Bot
 
 def main():
-    print('Starting...\n')
+    print('Starting..')
     bot = Bot()
     bot.start()
 

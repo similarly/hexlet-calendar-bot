@@ -1,0 +1,1 @@
+''' Module for estimating time passed since or remaining time until.'''
