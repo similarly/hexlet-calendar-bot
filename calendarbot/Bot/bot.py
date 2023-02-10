@@ -7,6 +7,7 @@ from calendarbot.config import Config
 
 from traceback import format_exc
 
+# This module is responsible for starting bot and longpolling Telegram API
 
 class Bot:
     KEY: str = Config.telegram_API_key

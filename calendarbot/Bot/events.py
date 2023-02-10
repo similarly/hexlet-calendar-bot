@@ -22,7 +22,8 @@ class Events:
                 body = ';'.join(split[0:-1])
                 after_semi = split[-1]
             # Format start time
-            start = event['start'].get('dateTime', event['start']) # TODO:.get('date')  ?????
+            # TODO:.get('date')  ?????
+            start = event['start'].get('dateTime', event['start'])
             start_formatted = datetime.datetime.fromisoformat(
                 start).strftime("%d.%m, %H:%M")
             event.update({'start': start_formatted,
@@ -36,7 +37,7 @@ class Events:
         blocks_list = []
         for event in self._get_dict():
             # DEBUG
-            print('• ' + event.get('summary', '- no summary -'))
+            print('• ' + event.get('summary', 'NO SUMMARY WAS GIVEN'))
             # Join event dictionary keys into block
             block = '\n'.join([event.get(key).strip() for key in keys])
             blocks_list.append('• ' + block + '\n')
@@ -44,9 +45,8 @@ class Events:
         return formatted_events
 
     def has_author(self) -> Self:
-        bad_cases = [' Наставник', 'Наставник',
-                     ' (ФИ наставника)', '(ФИ наставника)', ' (ФИ наставника) ', 'Нет наставника']
+        bad_cases = ['Наставник', '(ФИ наставника)', 'Нет наставника']
         # TODO: Add dunder methods later so class instances could be iter'd outside of class
         filtered_events = [event for event in self._get_dict(
-        ) if event['author'] not in bad_cases]
+        ) if event['author'].strip() not in bad_cases]
         return Events(filtered_events)

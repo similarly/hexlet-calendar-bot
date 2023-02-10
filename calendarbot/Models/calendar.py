@@ -17,7 +17,7 @@ class Calendar(Base):
     # Columns
     # TODO: calendar_name=Column(Integer, foreign_key=True)
     id = Column(Integer, primary_key=True)
-    calendar_id = Column('calendar_id', String)
+    calendar_id = Column('calendar_id', String, unique=True)
     
     # Relationships
     users = relationship("User", secondary=users_calendars_association, backref="calendars")
