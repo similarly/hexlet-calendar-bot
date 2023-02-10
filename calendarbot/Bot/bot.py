@@ -5,6 +5,8 @@ from calendarbot.Bot.updates import Updates
 from calendarbot.Bot.actions import Actions
 from calendarbot.config import Config
 
+from traceback import format_exc
+
 
 class Bot:
     KEY: str = Config.telegram_API_key
@@ -21,7 +23,7 @@ class Bot:
                 url = f"https://api.telegram.org/bot{self.KEY}/getUpdates?offset={offset}&allowedUpdates={allowed_updates}&timeout=60"
                 response = requests.get(url, timeout=(3.05, 60))
             except Exception as e:
-                print('Exception occured: ', e)
+                print('EXCEPTION: ', format_exc())
                 sleep(5)
                 continue
 
@@ -41,4 +43,4 @@ class Bot:
                     action = Actions()
                     action.execute(text, update)
             except Exception as e:
-                print('Exception occured: ', e)
+                print('EXCEPTION: ', format_exc())

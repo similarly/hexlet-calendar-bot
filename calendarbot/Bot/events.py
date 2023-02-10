@@ -14,7 +14,7 @@ class Events:
         for event in self.event_list:
             # Create new fields
             split = event['summary'].split(';')
-            # If no author
+            # If event has no author, set it
             if len(split) == 1:
                 body = split
                 after_semi = 'Нет наставника.'
@@ -22,7 +22,7 @@ class Events:
                 body = ';'.join(split[0:-1])
                 after_semi = split[-1]
             # Format start time
-            start = event['start'].get('dateTime', event['start'])['date']
+            start = event['start'].get('dateTime', event['start']) # TODO:.get('date')  ?????
             start_formatted = datetime.datetime.fromisoformat(
                 start).strftime("%d.%m, %H:%M")
             event.update({'start': start_formatted,

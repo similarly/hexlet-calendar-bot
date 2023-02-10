@@ -1,5 +1,5 @@
 from calendarbot.Bot.calendar import Calendar
-from calendarbot.Bot.bot_requests import send_message
+from calendarbot.Bot.botrequests import send_message
 
 
 class Actions:
